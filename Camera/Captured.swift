@@ -14,11 +14,14 @@ class Captured: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBAction func exit(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setNavigationBarHidden(true, animated: false)
 
         if capturedImage != nil {
             imageView.image = capturedImage!

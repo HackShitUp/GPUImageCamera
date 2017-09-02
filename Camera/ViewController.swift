@@ -9,23 +9,26 @@
 import UIKit
 import GPUImage
 
+/*
+ • Capture photo [X]
+ • Record video []
+ • Flash for front camera []
+ • Flash for back camera []
+ 
+ • Zoom for front camera []
+ • Zoom for back camera []
+ 
+ 
+ 
+ */
+
 class ViewController: UIViewController {
-    /*
-     // FOCUS
-     https://www.google.com/search?q=gpuimage+camera+focus+ios&oq=gpuimage+camera+focus+ios&aqs=chrome..69i57.4925j0j7&sourceid=chrome&ie=UTF-8
-     https://stackoverflow.com/questions/33109501/gpuimage-focusing-and-exposure-on-tap-does-not-work-properly-missing-somethi
-     https://github.com/BradLarson/GPUImage/issues/254
-     
-     // Open source apps
-     https://medium.mybridge.co/21-amazing-open-source-ios-apps-written-in-swift-5e835afee98e
-     
-     
-     
-     */
 
     var videoCamera: GPUImageVideoCamera!
     let filteredVideoView = GPUImageView(frame: UIScreen.main.bounds)
     let defaultFilter = GPUImageFilter()
+    
+    let pinchGesture = UIPinchGestureRecognizer()
     
     @IBAction func capture(_ sender: Any) {
         defaultFilter.useNextFrameForImageCapture()
@@ -36,9 +39,20 @@ class ViewController: UIViewController {
         
         
     }
+    
+    func switchCamera() {
+        videoCamera?.rotateCamera()
+    }
+    
+    /// ZOOM ON THE CAMERA.
+    func zoom(sender: UIPinchGestureRecognizer) {
+//        let zoomScale = min(maxZoomScale, max(1.0, min(beginZoomScale * pinch.scale,  captureDevice!.activeFormat.videoMaxZoomFactor)))
+        
+        
 
+    }
 
-
+    /// FOCUS ON THE CAMERA.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touchPoint = touches.first! as UITouch
         let screenSize = view.bounds.size
@@ -81,10 +95,6 @@ class ViewController: UIViewController {
         }
     }
     
-    func switchCamera() {
-        videoCamera?.rotateCamera()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -117,6 +127,10 @@ class ViewController: UIViewController {
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(switchCamera))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
+        
+        // Pinch to zoom
+        pinchGesture.addTarget(self, action: #selector(zoom))
+        view.addGestureRecognizer(pinchGesture)
     }
 
     override func didReceiveMemoryWarning() {
