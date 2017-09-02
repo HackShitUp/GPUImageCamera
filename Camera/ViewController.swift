@@ -37,45 +37,7 @@ class ViewController: UIViewController {
         
     }
 
-//    if (tgr.state == UIGestureRecognizerStateRecognized) {
-//    CGPoint location = [tgr locationInView:self.photoView];
-//    
-//    AVCaptureDevice *device = videoCamera.inputCamera;
-//    CGPoint pointOfInterest = CGPointMake(.5f, .5f);
-//    NSLog(@"taplocation x = %f y = %f", location.x, location.y);
-//    CGSize frameSize = [[self photoView] frame].size;
-//    
-//    if ([videoCamera cameraPosition] == AVCaptureDevicePositionFront) {
-//    location.x = frameSize.width - location.x;
-//    }
-//    
-//    pointOfInterest = CGPointMake(location.y / frameSize.height, 1.f - (location.x / frameSize.width));
-//    
-//    
-//    if ([device isFocusPointOfInterestSupported] && [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-//    NSError *error;
-//    if ([device lockForConfiguration:&error]) {
-//    [device setFocusPointOfInterest:pointOfInterest];
-//    
-//    [device setFocusMode:AVCaptureFocusModeAutoFocus];
-//    
-//    if([device isExposurePointOfInterestSupported] && [device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
-//    {
-//    
-//    
-//    [device setExposurePointOfInterest:pointOfInterest];
-//    [device setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
-//    }
-//    
-//    [device unlockForConfiguration];
-//    
-//    NSLog(@"FOCUS OK");
-//    } else {
-//    NSLog(@"ERROR = %a", error);
-//    }  
-//    }
-//    }
-//    }
+
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touchPoint = touches.first! as UITouch
