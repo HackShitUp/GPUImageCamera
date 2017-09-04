@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import AVFoundation
+import AVKit
 
 class Captured: UIViewController {
 
     var capturedImage: UIImage?
+    var capturedURL: URL?
     
     @IBOutlet weak var imageView: UIImageView!
     
@@ -22,9 +25,23 @@ class Captured: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        view.backgroundColor = UIColor.black
 
         if capturedImage != nil {
             imageView.image = capturedImage!
+            
+        } else {
+            print(capturedURL!)
+            // MARK: - AVPlayer
+            let player = AVPlayer(url: self.capturedURL!)
+            let playerLayer = AVPlayerLayer(player: player)
+            playerLayer.frame = self.imageView.bounds
+            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            self.imageView.contentMode = .scaleAspectFit
+            self.imageView.layer.addSublayer(playerLayer)
+            player.isMuted = false
+            player.play()
+            
         }
     }
 

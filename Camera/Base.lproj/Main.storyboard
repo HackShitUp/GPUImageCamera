@@ -25,14 +25,14 @@
                                 <rect key="frame" x="150" y="533" width="75" height="75"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="Camera"/>
-                                <connections>
-                                    <action selector="capture:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ep8-O5-7TD"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="ztn-i3-Vsm"/>
+                    <connections>
+                        <outlet property="captureButton" destination="7oC-xQ-UYL" id="Azo-tS-Kz0"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

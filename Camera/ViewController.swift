@@ -25,34 +25,93 @@ import GPUImage
 class ViewController: UIViewController {
 
     var videoCamera: GPUImageVideoCamera!
+    var movieWriter: GPUImageMovieWriter!
+    var movieFile: GPUImageMovie!
+    
     let filteredVideoView = GPUImageView(frame: UIScreen.main.bounds)
     let defaultFilter = GPUImageFilter()
     
+    
     let pinchGesture = UIPinchGestureRecognizer()
     
-    @IBAction func capture(_ sender: Any) {
+    @IBOutlet weak var captureButton: UIButton!
+    
+    
+    /// Function: Record video
+    func recordVideo(sender: UILongPressGestureRecognizer) {
+        
+        
+//        let outputFileName = UUID().uuidString
+//        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+        
+//        let moviePath = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathExtension("mov")
+//        unlink((moviePath as NSString).utf8String)
+        
+//        // Create movieWriter
+//        movieWriter = GPUImageMovieWriter(movieURL: moviePath, size: UIScreen.main.bounds.size)
+//        movieWriter?.encodingLiveVideo = true
+//        movieWriter?.shouldPassthroughAudio = true
+//        // Create movieFiler
+//        movieFile = GPUImageMovie.init(url: moviePath)
+//        movieFile?.runBenchmark = true
+//        movieFile?.playAtActualSpeed = true
+//        movieFile?.audioEncodingTarget = movieWriter
+//        movieFile?.enableSynchronizedEncoding(using: movieWriter)
+        
+        
+        var pathToMovie: String = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Documents/Movie.m4v").absoluteString
+        unlink((pathToMovie as NSString).utf8String)
+        // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
+//        var movieURL = URL.fileURL(withPath: pathToMovie)
+        var movieURL = URL(fileURLWithPath: pathToMovie)
+        movieWriter = GPUImageMovieWriter(movieURL: movieURL, size: CGSize(width: 480.0, height: 640.0))
+        movieWriter.encodingLiveVideo = true
+        
+//        [filter addTarget:movieWriter];
+//        [filter addTarget:filterView];
+        defaultFilter.addTarget(movieWriter)
+        defaultFilter.addTarget(filteredVideoView)
+
+        
+        
+        
+        movieWriter?.startRecording()
+        movieFile?.startProcessing()
+        
+        if sender.state == .ended {
+            movieWriter?.finishRecording(completionHandler: {
+                let capturedVC = self.storyboard?.instantiateViewController(withIdentifier: "capturedVC") as! Captured
+                // file:///private/var/mobile/Containers/Data/Application/F86B1236-2700-4E87-96C4-7740B5954D9C/tmp/E59C9D55-67A0-4740-89C3-F0613BEC9966.mov
+                // file:///var/mobile/Containers/Data/Application/C2142F8F-1E68-4047-A71C-5E65939FC283/Documents/movie.mp4
+
+                capturedVC.capturedURL = movieURL
+                self.navigationController?.pushViewController(capturedVC, animated: true)
+            })
+        }
+    }
+    
+    /// Function: Take the photo.
+    func takePhoto() {
         defaultFilter.useNextFrameForImageCapture()
         
         let capturedVC = self.storyboard?.instantiateViewController(withIdentifier: "capturedVC") as! Captured
         capturedVC.capturedImage = defaultFilter.imageFromCurrentFramebuffer()
         self.navigationController?.pushViewController(capturedVC, animated: true)
-        
-        
     }
     
+    /// Function: Switch the GPUImageVideoCamera's device camera.
     func switchCamera() {
         videoCamera?.rotateCamera()
     }
     
-    /// ZOOM ON THE CAMERA.
+    /// Function: Zoom in on the frame.
+    // TODO:
     func zoom(sender: UIPinchGestureRecognizer) {
 //        let zoomScale = min(maxZoomScale, max(1.0, min(beginZoomScale * pinch.scale,  captureDevice!.activeFormat.videoMaxZoomFactor)))
         
-        
-
     }
 
-    /// FOCUS ON THE CAMERA.
+    /// Function: Focus on the camera's view.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touchPoint = touches.first! as UITouch
         let screenSize = view.bounds.size
@@ -107,21 +166,30 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        /// Create GPUImageVideoCamera
         videoCamera = GPUImageVideoCamera(sessionPreset: AVCaptureSessionPresetHigh, cameraPosition: .front)
         videoCamera?.horizontallyMirrorRearFacingCamera = false
         videoCamera?.horizontallyMirrorFrontFacingCamera = true
         videoCamera?.outputImageOrientation = .portrait
-        
-
+        // Add the camera to GPUImageView
         videoCamera?.addTarget(defaultFilter)
         defaultFilter.addTarget(filteredVideoView)
         videoCamera?.startCapture()
-        
-        
+
         view.insertSubview(filteredVideoView, at: 0)
-        
         view.isUserInteractionEnabled = true
+        
+        // Long tap to record video
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(recordVideo))
+        longPress.minimumPressDuration = 0.30
+        captureButton.addGestureRecognizer(longPress)
+        
+        // Tap to capture image
+        let captureTap = UITapGestureRecognizer(target: self, action: #selector(takePhoto))
+        captureTap.numberOfTapsRequired = 1
+        captureButton.isUserInteractionEnabled = true
+        captureButton.addGestureRecognizer(captureTap)
         
         // Double tap to switch.
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(switchCamera))
