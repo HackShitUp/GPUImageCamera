@@ -129,10 +129,9 @@ class ViewController: UIViewController {
         print("pathToMovie \(pathToMovie)")
         unlink((pathToMovie as NSString).utf8String)
         let movieURL = NSURL.fileURL(withPath: pathToMovie)
-        movieWriter = GPUImageMovieWriter(movieURL: movieURL, size: self.view.bounds.size)
+        movieWriter = GPUImageMovieWriter(movieURL: movieURL, size: CGSize(width: 480.00, height: 640.00))
         movieWriter!.encodingLiveVideo = true
 
-        
         
         // Add targets
         videoCamera!.addTarget(defaultFilter)
@@ -144,22 +143,19 @@ class ViewController: UIViewController {
         
 
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
-            print("RECORDING!!!")
             self.videoCamera!.audioEncodingTarget = self.movieWriter
             self.movieWriter!.startRecording()
-//            self.movieFile!.startProcessing()
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 10.00, execute: {
-                print("ENDING RECORDING!!!")
                 self.defaultFilter.removeTarget(self.movieWriter)
                 self.videoCamera!.audioEncodingTarget = nil
                 self.movieWriter!.finishRecording()
                 
-                print(pathToMovie)
-                let videoURL = URL(fileURLWithPath: pathToMovie)
+//                print(pathToMovie)
+//                let videoURL = URL(fileURLWithPath: pathToMovie)
               
                 let capturedVC = self.storyboard?.instantiateViewController(withIdentifier: "capturedVC") as! Captured
-                capturedVC.capturedURL = videoURL
+                capturedVC.capturedURL = URL(fileURLWithPath: pathToMovie)
                 self.navigationController?.pushViewController(capturedVC, animated: false)
 
             })
